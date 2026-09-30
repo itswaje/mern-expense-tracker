@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import "./AddExpenseForm.css";
 
+// Backend API URL
+const API_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 function AddExpenseForm() {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
@@ -13,7 +17,7 @@ function AddExpenseForm() {
   const [expenses, setExpenses] = useState([]);
   const [filterCategory, setFilterCategory] = useState("All");
 
-  // Edit states
+  // Edit state
   const [editingId, setEditingId] = useState(null);
 
   // ==============================
@@ -22,14 +26,13 @@ function AddExpenseForm() {
 
   const fetchExpenses = async () => {
     try {
-      let url = "http://localhost:5000/api/expenses";
+      let url = `${API_URL}/api/expenses`;
 
       if (filterCategory !== "All") {
         url += `?category=${filterCategory}`;
       }
 
       const response = await fetch(url);
-
       const data = await response.json();
 
       if (!response.ok) {
@@ -44,13 +47,11 @@ function AddExpenseForm() {
     }
   };
 
-
   // Load expenses when page loads
   // and whenever category filter changes
   useEffect(() => {
     fetchExpenses();
   }, [filterCategory]);
-
 
   // ==============================
   // Add / Update Expense
@@ -84,12 +85,12 @@ function AddExpenseForm() {
     setSuccess("");
 
     try {
-      let url = "http://localhost:5000/api/expenses";
+      let url = `${API_URL}/api/expenses`;
       let method = "POST";
 
       // If editing
       if (editingId) {
-        url = `http://localhost:5000/api/expenses/${editingId}`;
+        url = `${API_URL}/api/expenses/${editingId}`;
         method = "PUT";
       }
 
@@ -117,13 +118,11 @@ function AddExpenseForm() {
         return;
       }
 
-
       // ==============================
       // Update existing expense
       // ==============================
 
       if (editingId) {
-
         setExpenses((previousExpenses) =>
           previousExpenses.map((expense) =>
             expense._id === editingId
@@ -145,7 +144,6 @@ function AddExpenseForm() {
       // ==============================
 
       else {
-
         setExpenses((previousExpenses) => [
           data,
           ...previousExpenses
@@ -154,9 +152,7 @@ function AddExpenseForm() {
         setSuccess(
           "Expense added successfully!"
         );
-
       }
-
 
       // Clear form
       setTitle("");
@@ -168,7 +164,6 @@ function AddExpenseForm() {
       setError("Could not connect to the server");
     }
   };
-
 
   // ==============================
   // Edit Expense
@@ -201,7 +196,6 @@ function AddExpenseForm() {
     });
   };
 
-
   // ==============================
   // Cancel Edit
   // ==============================
@@ -218,7 +212,6 @@ function AddExpenseForm() {
     setError("");
     setSuccess("");
   };
-
 
   // ==============================
   // Delete Expense
@@ -237,7 +230,7 @@ function AddExpenseForm() {
     try {
 
       const response = await fetch(
-        `http://localhost:5000/api/expenses/${id}`,
+        `${API_URL}/api/expenses/${id}`,
         {
           method: "DELETE"
         }
@@ -251,7 +244,6 @@ function AddExpenseForm() {
         );
         return;
       }
-
 
       // Remove expense from screen
       setExpenses((previousExpenses) =>
@@ -275,7 +267,6 @@ function AddExpenseForm() {
     }
   };
 
-
   // ==============================
   // Calculate Total
   // ==============================
@@ -285,7 +276,6 @@ function AddExpenseForm() {
       total + Number(expense.amount),
     0
   );
-
 
   // ==============================
   // JSX
@@ -314,7 +304,6 @@ function AddExpenseForm() {
             </p>
 
           </div>
-
 
           <div className="balance-card">
 
@@ -517,9 +506,11 @@ function AddExpenseForm() {
                   type="submit"
                   className="add-button"
                 >
+
                   {editingId
                     ? "✓ Update Expense"
                     : "+ Add Expense"}
+
                 </button>
 
 
@@ -637,7 +628,6 @@ function AddExpenseForm() {
                     className="expense-item"
                     key={expense._id}
                   >
-
 
                     {/* Expense information */}
 
